@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:proyecto_flutter/core/services/login/IAuthService.dart';
 
-import '../../../core/services/AuthService.dart';
 
 class AuthController extends ChangeNotifier {
-  final AuthService _authService = AuthService();
+  final IAuthService _authService;
+
+  AuthController({required IAuthService authService})
+      : _authService = authService;
 
   String? _token;
   String? get token => _token;
@@ -11,7 +14,7 @@ class AuthController extends ChangeNotifier {
   Future<bool> login(String username, String password) async {
     final result = await _authService.login(username, password);
     if (result != null) {
-      _token = result;
+      _token = result.accessToken;
       notifyListeners();
       return true;
     }
