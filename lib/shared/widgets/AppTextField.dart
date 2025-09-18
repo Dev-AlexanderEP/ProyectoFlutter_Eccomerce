@@ -205,6 +205,8 @@ class _AppTextFieldState extends State<AppTextField> {
       width: 13,
       height: 13,
       color: _iconColor(), // opcional, para recolorizar
+      fit: BoxFit.scaleDown,
+
     );
 
     final Color bColor = _borderColor();
