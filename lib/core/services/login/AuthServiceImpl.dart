@@ -35,4 +35,19 @@ class AuthServiceImpl implements IAuthService {
     }
     return null;
   }
+  @override
+  Future<bool> resetPassword({
+    required String newPassword,
+    String? email,
+    String? code,
+  }) async {
+    final result = await remoteDataSource.resetPassword(newPassword: newPassword, email: email, code: code);
+    if (result != null) {
+      return true;
+    }
+    return false;
+    // Implementa la lógica para resetear la contraseña.
+    // Esto podría implicar llamar a otro endpoint en remoteDataSource.
+    // print("Reset password ejecutado (implementa la lógica aquí).");
+  }
 }

@@ -8,4 +8,11 @@ abstract class IAuthService {
   Future<AuthResponseModel?> login(String username, String password);
   Future<void> logout();
   Future<AuthResponseModel?> refreshToken(String refreshToken);
+
+  Future<bool> resetPassword({
+    // si tu backend acepta email+code directamente:
+    String? email,
+    required String newPassword,
+    String? code,
+  });
 }
