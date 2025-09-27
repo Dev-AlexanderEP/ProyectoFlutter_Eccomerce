@@ -53,4 +53,31 @@ class AuthRemoteRepositorie {
       return null;
     }
   }
+
+  Future<Map<String, dynamic>?> resetPassword({
+    required String newPassword,
+    String? email,
+    String? code,
+  }) async {
+    final url = Uri.parse(ApiConstants.resetPasswordEndpoint);
+
+    final response = await client.post(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: jsonEncode({
+        "newPassword": newPassword,
+        if (email != null) "email": email,
+        if (code != null) "code": code,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      print("Error resetPassword: ${response.statusCode} - ${response.body}");
+      return null;
+    }
+  }
 }
