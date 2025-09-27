@@ -26,6 +26,8 @@ class AppTextField extends StatefulWidget {
   final bool enabled;
 
   final String? actionIconAsset; // ruta del asset svg
+  final String? suffixIconAsset; // ← ruta opcional de SVG
+
 
 
   final TextInputType keyboardType;
@@ -80,6 +82,7 @@ class AppTextField extends StatefulWidget {
     this.prefixIcon,
     this.suffixIcon,
     this.actionIconAsset = 'lib/assets/icons/default.svg',
+    this.suffixIconAsset ,
 
 
     // Defaults inspirados en tus mockups
@@ -109,8 +112,11 @@ class AppTextField extends StatefulWidget {
     this.errorBorderColor = const Color(0xFFD32F2F),
   });
 
+
   @override
   State<AppTextField> createState() => _AppTextFieldState();
+
+
 }
 
 class _AppTextFieldState extends State<AppTextField> {
@@ -174,17 +180,43 @@ class _AppTextFieldState extends State<AppTextField> {
     // Suffix final (prioridad: custom > toggle eye > clear)
     Widget? suffix = widget.suffixIcon;
     if (suffix == null) {
-      if (widget.showObscureToggle) {
+      if (widget.suffixIconAsset != null && widget.suffixIconAsset!.isNotEmpty) {
+        if (widget.suffixIconAsset!.contains("check.svg")) {
+          // Caso especial → check que cambia de color
+          bool isValid = widget.validator == null
+              ? _hasText // si no hay validador, al menos debe haber texto
+              : (widget.validator!(_controller.text) == null);
+
+          suffix = SvgPicture.asset(
+            isValid
+                ? 'lib/assets/icons/checkValid.svg' // ✅ verde válido
+                : 'lib/assets/icons/check.svg',     // ⭕ rojo / base
+            width: 20,
+            height: 20,
+
+            fit: BoxFit.scaleDown,
+          );
+        } else {
+          // Cualquier otro svg → normal
+          suffix = SvgPicture.asset(
+            widget.suffixIconAsset!,
+            width: 20,
+            height: 20,
+            color: _iconColor(),
+            fit: BoxFit.scaleDown,
+          );
+        }
+      } else if (widget.showObscureToggle) {
         suffix = IconButton(
           tooltip: _obscure ? 'Mostrar' : 'Ocultar',
           onPressed: () => setState(() => _obscure = !_obscure),
           icon: SvgPicture.asset(
             _obscure
-                ? 'lib/assets/icons/eye.svg'       // 👁 mostrar
-                : 'lib/assets/icons/eye-closed.svg',  // 🚫 ocultar
+                ? 'lib/assets/icons/eye.svg'
+                : 'lib/assets/icons/eye-closed.svg',
             width: 20,
             height: 20,
-            color: _iconColor(), // opcional: para aplicar color dinámico
+            color: _iconColor(),
           ),
         );
       } else if (widget.suffixClear && _hasText && _isFocused) {
