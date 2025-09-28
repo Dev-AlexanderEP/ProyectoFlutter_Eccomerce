@@ -3,14 +3,22 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:proyecto_flutter/core/services/login/IAuthService.dart';
 import 'package:proyecto_flutter/core/services/login/forgotPassword/IForgotPass.dart';
+import 'package:proyecto_flutter/core/services/register/IRegisterService.dart';
+import 'package:proyecto_flutter/data/models/RegisterModel.dart';
 
 
 class AuthController extends ChangeNotifier {
   final IAuthService _authService;
   final IForgotPass _forgotPass;
+  final IRegisterService _registerService;
 
-  AuthController({required IAuthService authService, required IForgotPass forgotPass})
-      : _authService = authService, _forgotPass = forgotPass;
+  AuthController({
+    required IAuthService authService, 
+    required IForgotPass forgotPass,
+    required IRegisterService registerService,
+  }) : _authService = authService, 
+       _forgotPass = forgotPass,
+       _registerService = registerService;
 
   String? _token;
   String? get token => _token;
@@ -64,6 +72,17 @@ class AuthController extends ChangeNotifier {
       code: code,
     );
     return success;
+  }
+
+  // Métodos de registro
+  Future<RegisterResponseModel?> register(String username, String email, String password) async {
+    final result = await _registerService.register(username, email, password);
+    return result;
+  }
+
+  Future<bool> verifyRegistrationCode(String email, String code) async {
+    final result = await _registerService.verifyRegistrationCode(email, code);
+    return result;
   }
 
 }

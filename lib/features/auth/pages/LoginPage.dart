@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:proyecto_flutter/core/constants/AppSpacing.dart';
 import 'package:proyecto_flutter/core/theme/colors.dart';
@@ -374,6 +373,31 @@ class _LoginPageState extends State<LoginPage> {
 
                           // El botón ocupa el ancho disponible
                           SizedBox(width: double.infinity, child: GoogleButton()),
+
+                          const SizedBox(height: 24),
+
+                          // Link para registro
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text(
+                                '¿No tienes una cuenta? ',
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.pushNamed(context, '/register');
+                                },
+                                child: const Text(
+                                  'Regístrate',
+                                  style: TextStyle(
+                                    color: AppColors.red500,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
 
                           // Empuja el contenido hacia arriba si sobra espacio
                           const SizedBox(height: 8),
