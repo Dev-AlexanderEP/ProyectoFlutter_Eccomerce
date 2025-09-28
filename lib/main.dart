@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:proyecto_flutter/core/services/login/AuthServiceImpl.dart';
 import 'package:proyecto_flutter/data/RemoteRepositorie/login/LoginAuthRemoteRepositorie.dart';
-
+import 'core/services/login/IAuthService.dart';
 import 'core/services/login/forgotPassword/ForgotPassImpl.dart';
 import 'core/services/login/forgotPassword/IForgotPass.dart';
+import 'core/services/register/IRegisterService.dart';
+import 'core/services/register/RegisterServiceImpl.dart';
+import 'core/routes/app_routes.dart';
 import 'data/RemoteRepositorie/login/forgotPassword/ForgotPassRemoteRepositorie.dart';
+import 'data/RemoteRepositorie/register/RegisterRemoteRepository.dart';
 import 'features/auth/controllers/AuthController.dart';
-import 'features/auth/pages/LoginPage.dart';
 import 'package:http/http.dart' as http;
 
 
@@ -28,15 +31,19 @@ void main() {
             client: ctx.read<http.Client>(),
           ),
         ),
-        // Ejemplo para forgot:
         Provider<ForgotPassRemoteRepositorie>(
           create: (ctx) => ForgotPassRemoteRepositorie(
             client: ctx.read<http.Client>(),
           ),
         ),
+        Provider<RegisterRemoteRepository>(
+          create: (ctx) => RegisterRemoteRepository(
+            client: ctx.read<http.Client>(),
+          ),
+        ),
 
         // 3) Servicios que usan los repos
-        Provider<AuthServiceImpl>(
+        Provider<IAuthService>(
           create: (ctx) => AuthServiceImpl(
             remoteDataSource: ctx.read<AuthRemoteRepositorie>(),
           ),
@@ -46,13 +53,18 @@ void main() {
             remoteDataSource: ctx.read<ForgotPassRemoteRepositorie>(),
           ),
         ),
+        Provider<IRegisterService>(
+          create: (ctx) => RegisterServiceImpl(
+            remoteDataSource: ctx.read<RegisterRemoteRepository>(),
+          ),
+        ),
 
         // 4) Controllers que usan los servicios
         ChangeNotifierProvider<AuthController>(
           create: (ctx) => AuthController(
-            authService: ctx.read<AuthServiceImpl>(),
-            forgotPass: ctx.read<IForgotPass>(), // 👈 ahora sí pasamos el requerido
-
+            authService: ctx.read<IAuthService>(),
+            forgotPass: ctx.read<IForgotPass>(),
+            registerService: ctx.read<IRegisterService>(),
           ),
         ),
       ],
@@ -67,11 +79,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'Mix&Match E-commerce',
       theme: ThemeData(
         fontFamily: 'Poppins', // 👈 aquí la fuente global
       ),
-      home: LoginPage(title: 'Inicio de sesion',),
+      initialRoute: AppRoutes.initialRoute,
+      routes: AppRoutes.routes,
     );
   }
 }

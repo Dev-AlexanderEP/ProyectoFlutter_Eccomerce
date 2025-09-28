@@ -88,8 +88,12 @@ class _VerifyCodeContentState extends State<_VerifyCodeContent> {
   @override
   void dispose() {
     SystemChannels.textInput.invokeMethod('TextInput.hide');
-    for (final c in _controllers) c.dispose();
-    for (final n in _nodes) n.dispose();
+    for (final c in _controllers) {
+      c.dispose();
+    }
+    for (final n in _nodes) {
+      n.dispose();
+    }
     _tick?.cancel();
     super.dispose();
   }
@@ -139,7 +143,9 @@ class _VerifyCodeContentState extends State<_VerifyCodeContent> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Código inválido o expirado')),
       );
-      for (final c in _controllers) c.clear();
+      for (final c in _controllers) {
+        c.clear();
+      }
       _focusIndex(0);
       setState(() {});
       return false;
