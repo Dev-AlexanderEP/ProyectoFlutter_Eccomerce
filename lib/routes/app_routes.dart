@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/utils/SplashScreen.dart';
 import '../../features/auth/pages/LoginPage.dart';
 import '../../features/auth/pages/RegisterPage.dart';
 import '../../features/auth/pages/VerificationPage.dart';
@@ -11,6 +12,8 @@ class AppRoutes {
   static const String verification = '/verification';
   static const String onboarding = '/onboarding';
   static const String home = '/home';
+  static const String splash = '/splash';
+
 
   // Mapa de rutas
   static Map<String, WidgetBuilder> routes = {
@@ -18,10 +21,12 @@ class AppRoutes {
     register: (context) => const RegisterPage(),
     verification: (context) => const VerificationPage(),
     onboarding: (context) => const OnboardingPages(),
+    splash: (context) => const SplashScreen(),
   };
 
   // Ruta inicial
-  static const String initialRoute = login;
+  static const String initialRoute = splash;
+
 
   // Método para navegación
   static void navigateTo(BuildContext context, String routeName, {Object? arguments}) {
