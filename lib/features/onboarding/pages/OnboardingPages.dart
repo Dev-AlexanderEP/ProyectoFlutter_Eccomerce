@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/routes/app_routes.dart';
+import '../../../routes/app_routes.dart';
 import '../../../shared/widgets/AppButton.dart';
 
 class OnboardingPages extends StatefulWidget {
