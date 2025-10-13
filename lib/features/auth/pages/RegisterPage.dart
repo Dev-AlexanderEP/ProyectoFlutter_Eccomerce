@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../core/routes/app_routes.dart';
+import '../../../routes/app_routes.dart';
 import '../../../shared/widgets/AppButton.dart';
 import '../../../shared/widgets/AppTextField.dart';
 import '../../../shared/widgets/GoogleButton.dart';
