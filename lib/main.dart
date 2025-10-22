@@ -14,6 +14,25 @@ import 'features/auth/controllers/AuthController.dart';
 import 'package:http/http.dart' as http;
 
 
+// void main() {
+//   runApp(
+//     MultiProvider(
+//       providers: [
+//         ChangeNotifierProvider(
+//         create: (_) => AuthController(
+//               authService: AuthServiceImpl(
+//                   remoteDataSource: AuthRemoteRepositorie(
+//                       client: http.Client(),
+//                   ),
+//
+//               ),
+//         ),
+//         ),
+//       ],
+//       child: const MyApp(),
+//     ),
+//   );
+// }
 
 void main() {
   runApp(
