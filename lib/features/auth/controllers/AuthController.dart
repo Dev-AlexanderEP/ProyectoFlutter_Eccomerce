@@ -6,6 +6,8 @@ import 'package:proyecto_flutter/core/services/login/forgotPassword/IForgotPass.
 import 'package:proyecto_flutter/core/services/register/IRegisterService.dart';
 import 'package:proyecto_flutter/data/models/RegisterModel.dart';
 
+import '../../../core/constants/ApiResponse.dart';
+
 
 class AuthController extends ChangeNotifier {
   final IAuthService _authService;
@@ -33,7 +35,7 @@ class AuthController extends ChangeNotifier {
     return false;
   }
 
-  Future<bool> sendForgotPasswordCode(String email) async {
+  Future<bool> sendCodeEmail(String email) async {
     // Generar código aleatorio de 5 dígitos
     final random = Random();
     final code = (10000 + random.nextInt(90000)).toString();
@@ -45,7 +47,7 @@ class AuthController extends ChangeNotifier {
       code: code,
     );
   }
-  Future<bool> verifyForgotPasswordCode({
+  Future<bool> verifyCodeEmail({
     required String email,
     required String inputCode,
   }) async {
@@ -75,14 +77,10 @@ class AuthController extends ChangeNotifier {
   }
 
   // Métodos de registro
-  Future<RegisterResponseModel?> register(String username, String email, String password) async {
+  Future<ApiResponse<RegisterResponseModel>?> register(String username, String email, String password) async {
     final result = await _registerService.register(username, email, password);
     return result;
   }
 
-  Future<bool> verifyRegistrationCode(String email, String code) async {
-    final result = await _registerService.verifyRegistrationCode(email, code);
-    return result;
-  }
 
 }
