@@ -2,39 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:proyecto_flutter/core/services/login/AuthServiceImpl.dart';
 import 'package:proyecto_flutter/data/RemoteRepositorie/login/LoginAuthRemoteRepositorie.dart';
+import 'package:proyecto_flutter/routes/app_routes.dart';
 import 'core/services/login/IAuthService.dart';
 import 'core/services/login/forgotPassword/ForgotPassImpl.dart';
 import 'core/services/login/forgotPassword/IForgotPass.dart';
 import 'core/services/register/IRegisterService.dart';
 import 'core/services/register/RegisterServiceImpl.dart';
-import 'core/routes/app_routes.dart';
 import 'data/RemoteRepositorie/login/forgotPassword/ForgotPassRemoteRepositorie.dart';
 import 'data/RemoteRepositorie/register/RegisterRemoteRepository.dart';
 import 'features/auth/controllers/AuthController.dart';
 import 'package:http/http.dart' as http;
 
+import 'features/auth/controllers/RegisterFlowController.dart';
 
-// void main() {
-//   runApp(
-//     MultiProvider(
-//       providers: [
-//         ChangeNotifierProvider(
-//         create: (_) => AuthController(
-//               authService: AuthServiceImpl(
-//                   remoteDataSource: AuthRemoteRepositorie(
-//                       client: http.Client(),
-//                   ),
-//
-//               ),
-//         ),
-//         ),
-//       ],
-//       child: const MyApp(),
-//     ),
-//   );
-// }
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(
     MultiProvider(
       providers: [
@@ -81,12 +64,19 @@ void main() {
         // 4) Controllers que usan los servicios
         ChangeNotifierProvider<AuthController>(
           create: (ctx) => AuthController(
+
             authService: ctx.read<IAuthService>(),
             forgotPass: ctx.read<IForgotPass>(),
             registerService: ctx.read<IRegisterService>(),
           ),
         ),
+        // Proveedor para el flujo de registro
+
+        ChangeNotifierProvider<RegisterFlowController>(
+          create: (_) => RegisterFlowController(),
+        ),
       ],
+
       child: const MyApp(),
     ),
   );
