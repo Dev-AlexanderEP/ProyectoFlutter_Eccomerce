@@ -1,20 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../core/theme/type.dart';
 import '../../../routes/app_routes.dart';
 import '../../../shared/widgets/AppButton.dart';
 import '../../../shared/widgets/AppTextField.dart';
 import '../../../shared/widgets/GoogleButton.dart';
 import '../../../shared/widgets/TopBar.dart';
 import '../controllers/AuthController.dart';
+import '../controllers/RegisterFlowController.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
+
+
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+
+@override
+void initState() {
+  super.initState();
+  WidgetsBinding.instance.addPostFrameCallback((_) async {
+    final flow = Provider.of<RegisterFlowController>(context, listen: false);
+    await flow.loadState();
+    if (flow.state == 1) {
+      AppRoutes.navigateTo(context, AppRoutes.verification, arguments: {
+        'email': flow.email,
+        'fromRegister': true,
+      });
+    }
+  });
+}
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -91,25 +110,27 @@ class _RegisterPageState extends State<RegisterPage> {
 
     try {
       final auth = Provider.of<AuthController>(context, listen: false);
-      final result = await auth.register(
-        usernameController.text.trim(),
-        emailController.text.trim(),
-        passwordController.text.trim(),
-      );
 
-      if (!mounted) return;
+      var  success = await auth.sendCodeEmail(emailController.text.trim(),);
 
-      if (result != null && result.success) {
+      if(success){
+        final flow = Provider.of<RegisterFlowController>(context, listen: false);
+        await flow.saveState(
+          state: 1,
+          username: usernameController.text.trim(),
+          email: emailController.text.trim(),
+          password: passwordController.text.trim(),
+          expiresAt: DateTime.now().add(const Duration(minutes: 10)), // ejemplo de expiración
+        );
+        if (!mounted) return;
+
         // Navegar a la página de verificación
         AppRoutes.navigateTo(context, AppRoutes.verification, arguments: {
           'email': emailController.text.trim(),
           'fromRegister': true,
         });
-      } else {
-        setState(() {
-          errorMessage = result?.message ?? 'Error al registrar usuario';
-        });
       }
+
     } catch (e) {
       if (mounted) {
         setState(() {
@@ -125,40 +146,23 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60),
-        child: TopBar(
-          title: 'Crear Cuenta',
-          backRouteName: AppRoutes.login,
-        ),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
+    return IntrinsicHeight(
             child: Form(
               key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 6),
 
                   // Username Field
-                  const Text(
-                    'Nombre de usuario',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black87,
-                    ),
-                  ),
+
+                  Text('Nombre de usuario', style: AppTypography.h2),
+
                   const SizedBox(height: 8),
                   AppTextField(
                     controller: usernameController,
                     hint: 'Jhon Doe',
-                    prefixIcon: const Icon(Icons.person_outline),
+                    actionIconAsset: 'lib/assets/icons/user.svg',
                     onChanged: (value) {
                       setState(() {
                         usernameError = _validateUsername(value);
@@ -177,24 +181,23 @@ class _RegisterPageState extends State<RegisterPage> {
                   const SizedBox(height: 24),
 
                   // Email Field
-                  const Text(
-                    'Correo Electrónico',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black87,
-                    ),
-                  ),
+                  Text('Correo Electrónico', style: AppTypography.h2),
+
                   const SizedBox(height: 8),
                   AppTextField(
                     controller: emailController,
                     hint: 'example@gmail.com',
-                    prefixIcon: const Icon(Icons.email_outlined),
+                    actionIconAsset: 'lib/assets/icons/mail.svg',
                     keyboardType: TextInputType.emailAddress,
                     onChanged: (value) {
                       setState(() {
                         emailError = _validateEmail(value);
                       });
+                    },
+                    validator: (v) {
+                      if (v == null || v.isEmpty) return 'Ingresa tu correo';
+                      if (!v.contains('@')) return 'Correo inválido';
+                      return null;
                     },
                   ),
                   if (emailError != null)
@@ -209,19 +212,13 @@ class _RegisterPageState extends State<RegisterPage> {
                   const SizedBox(height: 24),
 
                   // Password Field
-                  const Text(
-                    'Contraseña',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black87,
-                    ),
-                  ),
+                  Text('Contraseña', style: AppTypography.h2),
+
                   const SizedBox(height: 8),
                   AppTextField(
                     controller: passwordController,
-                    hint: '••••••',
-                    prefixIcon: const Icon(Icons.lock_outline),
+                    hint: 'Contraseña',
+                    actionIconAsset: 'lib/assets/icons/lock-keyhole.svg',
                     obscure: true,
                     showObscureToggle: true,
                     onChanged: (value) {
@@ -229,6 +226,8 @@ class _RegisterPageState extends State<RegisterPage> {
                         passwordError = _validatePassword(value);
                       });
                     },
+                    validator: (v) =>
+                    (v == null || v.isEmpty) ? 'Ingresa tu contraseña' : null,
                   ),
                   if (passwordError != null)
                     Padding(
@@ -242,24 +241,21 @@ class _RegisterPageState extends State<RegisterPage> {
                   const SizedBox(height: 24),
 
                   // Confirm Password Field
-                  const Text(
-                    'Confirmar Contraseña',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black87,
-                    ),
-                  ),
+
+                  Text('Confirmar Contraseña', style: AppTypography.h2),
+
                   const SizedBox(height: 8),
                   AppTextField(
                     controller: confirmPasswordController,
-                    hint: '••••••',
-                    prefixIcon: const Icon(Icons.lock_outline),
+                    hint: 'Contraseña',
+                    actionIconAsset: 'lib/assets/icons/lock-keyhole.svg',
                     obscure: true,
                     showObscureToggle: true,
                     onChanged: (value) {
                       setState(() {}); // Para actualizar la validación en tiempo real
                     },
+                    validator: (v) =>
+                    (v == null || v.isEmpty) ? 'Ingresa tu contraseña' : null,
                   ),
                   if (passwordController.text != confirmPasswordController.text && 
                       confirmPasswordController.text.isNotEmpty)
@@ -332,9 +328,6 @@ class _RegisterPageState extends State<RegisterPage> {
                 ],
               ),
             ),
-          ),
-        ),
-      ),
     );
   }
 }
