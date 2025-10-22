@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:proyecto_flutter/shared/widgets/MainLayout.dart';
 import '../../core/utils/SplashScreen.dart';
 import '../../features/auth/pages/LoginPage.dart';
 import '../../features/auth/pages/RegisterPage.dart';
@@ -17,9 +18,9 @@ class AppRoutes {
 
   // Mapa de rutas
   static Map<String, WidgetBuilder> routes = {
-    login: (context) => const LoginPage(title: 'Inicio de sesión'),
-    register: (context) => const RegisterPage(),
-    verification: (context) => const VerificationPage(),
+    login: (context) => const MainLayout(title: 'Iniciar Sesion', backRouteName: login, actionIconAsset: "lib/assets/icons/user.svg", child: LoginPage()),
+    register: (context) => const MainLayout(title: 'Registrar', backRouteName: onboarding, actionIconAsset: "lib/assets/icons/user.svg", child: RegisterPage()),
+    verification: (context) => const MainLayout(title: 'Verficicacion', backRouteName: onboarding, child: VerificationPage()) ,
     onboarding: (context) => const OnboardingPages(),
     splash: (context) => const SplashScreen(),
   };
