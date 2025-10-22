@@ -47,12 +47,12 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       actions: [
           IconButton(
-            icon:SvgPicture.asset(
-              actionIconAsset!,
+            icon: SvgPicture.asset(
+              actionIconAsset ?? 'lib/assets/icons/default.svg',
               width: 24,
               height: 24,
               colorFilter: ColorFilter.mode(Colors.black, BlendMode.srcIn),
-            ),   // ✅ aquí ya es un widget
+            ),
             onPressed: onActionPressed,
           ),
       ],
