@@ -1,39 +1,60 @@
+import '../../core/constants/ApiResponse.dart';
+
 class RegisterRequestModel {
-  final String username;
+  final String nombreUsuario;
   final String email;
-  final String password;
+  final String contrasenia;
 
   RegisterRequestModel({
-    required this.username,
+    required this.nombreUsuario,
     required this.email,
-    required this.password,
+    required this.contrasenia,
   });
 
   Map<String, dynamic> toJson() {
     return {
-      'username': username,
+      'nombreUsuario': nombreUsuario,
       'email': email,
-      'password': password,
+      'contrasenia': contrasenia,
     };
   }
 }
 
 class RegisterResponseModel {
-  final bool success;
-  final String message;
-  final String? userId;
+  final String id;
+  final String nombreUsuario;
+  final String email;
+  final String rol;
+  final bool activo;
+  final String createdAt;
+  final String updatedAt;
 
   RegisterResponseModel({
-    required this.success,
-    required this.message,
-    this.userId,
+    required this.id,
+    required this.nombreUsuario,
+    required this.email,
+    required this.rol,
+    required this.activo,
+    required this.createdAt,
+    required this.updatedAt,
   });
 
   factory RegisterResponseModel.fromJson(Map<String, dynamic> json) {
     return RegisterResponseModel(
-      success: json['success'] ?? false,
-      message: json['message'] ?? '',
-      userId: json['userId'],
+      id: json['id']?.toString() ?? '',                     // <- convierte int->String
+      nombreUsuario: json['nombre'],
+      email: json['email'],
+      rol: json['rol'],
+      activo: json['activo'],
+      createdAt: json['createdAt'],
+      updatedAt: json['updatedAt'],
     );
   }
+  static ApiResponse<RegisterResponseModel> fromApiResponseJson(Map<String, dynamic> json) {
+    return ApiResponse<RegisterResponseModel>.fromJson(
+      json,
+          (obj) => RegisterResponseModel.fromJson(obj),
+    );
+  }
+
 }
