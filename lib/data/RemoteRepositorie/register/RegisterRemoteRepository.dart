@@ -14,34 +14,24 @@ class RegisterRemoteRepository {
   }) async {
     final url = Uri.parse(ApiConstants.registerEndpoint);
 
-    try {
-      final response = await client.post(
-        url,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: jsonEncode({
-          "nombreUsuario": username,
-          "email": email,
-          "contrasenia": password,
-        }),
-      );
+    final response = await client.post(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: jsonEncode({
+        "nombreUsuario": username,
+        "email": email,
+        "contrasenia": password,
+      }),
+    );
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        return jsonDecode(response.body);
-      } else {
-        print("Error en registro: ${response.statusCode} - ${response.body}");
-        return {
-          'success': false,
-          'message': 'Error al registrar usuario: ${response.statusCode}',
-        };
-      }
-    } catch (e) {
-      print("Excepción al registrar: $e");
-      return {
-        'success': false,
-        'message': 'Error de conexión: $e',
-      };
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print(response.body);
+      return jsonDecode(response.body);
+    } else {
+      print("Error registro: ${response.statusCode} - ${response.body}");
+      return null;
     }
   }
 
@@ -51,33 +41,22 @@ class RegisterRemoteRepository {
   }) async {
     final url = Uri.parse(ApiConstants.registerVerifyCodeEndpoint);
 
-    try {
-      final response = await client.post(
-        url,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: jsonEncode({
-          "email": email,
-          "code": code,
-        }),
-      );
+    final response = await client.post(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: jsonEncode({
+        "email": email,
+        "code": code,
+      }),
+    );
 
-      if (response.statusCode == 200) {
-        return jsonDecode(response.body);
-      } else {
-        print("Error en verificación: ${response.statusCode} - ${response.body}");
-        return {
-          'success': false,
-          'message': 'Código de verificación inválido',
-        };
-      }
-    } catch (e) {
-      print("Excepción al verificar código: $e");
-      return {
-        'success': false,
-        'message': 'Error de conexión: $e',
-      };
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      print("Error verificación: ${response.statusCode} - ${response.body}");
+      return null;
     }
   }
 }
