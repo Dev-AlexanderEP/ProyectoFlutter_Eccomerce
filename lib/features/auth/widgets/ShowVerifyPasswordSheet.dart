@@ -128,7 +128,7 @@ class _VerifyCodeContentState extends State<_VerifyCodeContent> {
     }
 
     final auth = context.read<AuthController>();
-    final ok = await auth.verifyForgotPasswordCode(
+    final ok = await auth.verifyCodeEmail(
       email: widget.email,
       inputCode: code,
     );
