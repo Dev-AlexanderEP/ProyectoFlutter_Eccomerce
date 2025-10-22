@@ -1,20 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:proyecto_flutter/core/constants/AppSpacing.dart';
 import 'package:proyecto_flutter/core/theme/colors.dart';
 import 'package:proyecto_flutter/features/auth/widgets/ShowChangePasswordSheet.dart';
 import '../../../core/theme/type.dart';
 import '../../../shared/widgets/AppButton.dart';
 import '../../../shared/widgets/AppTextField.dart';
 import '../../../shared/widgets/GoogleButton.dart';
-import '../../../shared/widgets/TopBar.dart';
 import '../controllers/AuthController.dart';
 import '../widgets/ForgotPasswordSheet.dart';
 import '../widgets/ShowVerifyPasswordSheet.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key, required this.title});
-  final String title; // valor inicial, inmutable
+  const LoginPage({super.key});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -153,7 +150,8 @@ class _LoginPageState extends State<LoginPage> {
 
       // Si fue null (cerró/canceló), mantenemos estado 2 para que al volver a presionar, retome Verify
 
-    } else if (_forgotFlowState == 2) {
+    }
+    else if (_forgotFlowState == 2) {
       // 2) Abre Verify con el email guardado
       final email = _recoveryEmail;
       if (email == null || email.isEmpty) {
@@ -207,7 +205,8 @@ class _LoginPageState extends State<LoginPage> {
       }
 
       // Si fue null, seguimos en 2
-    } else if (_forgotFlowState == 3) {
+    }
+    else if (_forgotFlowState == 3) {
       // 3) Ya se verificó, solo mostramos un SnackBar y volvemos a estado 1
       bool respuesta = await showChangePasswordSheet(context, expiresAt: _verifyExpiresAt , email: _recoveryEmail!,   code: "12345",);
 
@@ -221,33 +220,8 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     final viewInsets = MediaQuery.of(context).viewInsets; // alto del teclado
 
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(), // cierra teclado al tocar fuera
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: TopBar(
-          title: 'Iniciar Sesión',
-          backRouteName: '/login',
-          actionIconAsset: 'lib/assets/icons/user.svg',
-        ),
-        // 👇 MUY IMPORTANTE para que el body se reacomode con el teclado
-        resizeToAvoidBottomInset: true,
 
-        // 👇 Volvemos el contenido scrollable
-        body: SafeArea(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              return SingleChildScrollView(
-                padding: EdgeInsets.only(
-                  left: AppSpacing.padCustom.left,
-                  right: AppSpacing.padCustom.right,
-                  top: AppSpacing.padCustom.top,
-                  // deja espacio extra cuando el teclado está visible
-                  bottom: (AppSpacing.padCustom.bottom) + viewInsets.bottom + 16,
-                ),
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                  child: IntrinsicHeight(
+    return IntrinsicHeight(
                     child: Form(
                       key: _formKey,
                       child: Column(
@@ -286,7 +260,6 @@ class _LoginPageState extends State<LoginPage> {
                                       focusNode: _passFocus,
                                       controller: passController,
                                       hint: 'Contraseña',
-                                      prefixIcon: const Icon(Icons.lock_outline),
                                       actionIconAsset: 'lib/assets/icons/lock-keyhole.svg',
                                       obscure: true,
                                       showObscureToggle: true,
@@ -404,13 +377,7 @@ class _LoginPageState extends State<LoginPage> {
                         ],
                       ),
                     ),
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-      ),
+
     );
   }
 
