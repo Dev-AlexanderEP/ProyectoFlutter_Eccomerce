@@ -219,7 +219,7 @@ Future<String?> showForgotPasswordSheet(BuildContext context) {
 
                     // Usar el provider dentro del builder: ctx.read(...)
                     final auth = ctx.read<AuthController>();
-                    final sent = await auth.sendForgotPasswordCode(email);
+                    final sent = await auth.sendCodeEmail(email);
 
                     if (sent) {
                       // Devuelve el email al padre (LoginPage)
